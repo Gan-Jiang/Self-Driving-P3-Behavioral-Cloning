@@ -2,32 +2,9 @@
 
 [![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
 
-Overview
----
-This repository contains starting files for the Behavioral Cloning Project.
-
 In this project, you will use what you've learned about deep neural networks and convolutional neural networks to clone driving behavior. You will train, validate and test a model using Keras. The model will output a steering angle to an autonomous vehicle.
 
 We have provided a simulator where you can steer a car around a track for data collection. You'll use image data and steering angles to train a neural network and then use this model to drive the car autonomously around the track.
-
-We also want you to create a detailed writeup of the project. Check out the [writeup template](https://github.com/udacity/CarND-Behavioral-Cloning-P3/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup. The writeup can be either a markdown file or a pdf document.
-
-To meet specifications, the project will require submitting five files: 
-* model.py (script used to create and train the model)
-* drive.py (script to drive the car - feel free to modify this file)
-* model.h5 (a trained Keras model)
-* a report writeup file (either markdown or pdf)
-* video.mp4 (a video recording of your vehicle driving autonomously around the track for at least one full lap)
-
-This README file describes how to output the video in the "Details About Files In This Directory" section.
-
-Creating a Great Writeup
----
-A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/432/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
 
 The Project
 ---
@@ -117,6 +94,35 @@ Will run the video at 48 FPS. The default FPS is 60.
 1. It's been noted the simulator might perform differently based on the hardware. So if your model drives succesfully on your machine it might not on another machine (your reviewer). Saving a video is a solid backup in case this happens.
 2. You could slightly alter the code in `drive.py` and/or `video.py` to create a video of what your model sees after the image is processed (may be helpful for debugging).
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+# What I did
+This model is used for driving behavior cloning. Images and steering angles are recorded using simulator. These images form the training set. Then, train a convolutional neural network and predict the steering angles using it while self-driving in the simulator. The training dataset is obtained according to the following procedure:
 
+(1) I first tried my best to drive in the middle of the lane for three loops;
+
+(2) Then, I did the recovery trick for some difficult turns several times;
+
+(3) I put all of the center images I recorded to dataset. Then, a train-validation-test split was done, the ratio of the training data, validation data, and test data are 60%, 20% and 20% respectively;
+
+The neural network architechture is obtained as follows:
+
+(1) I set LeNet as the starting point. Since LeNet is using 32323 pictures, I resize each image to 32643. Then, I make all of the data zero-mean and normalized;
+
+(2) I choose Adam as optimizer since it can consider the learning rate decay automatically; The batch size is set to 128 which is appropriate for my GPU memory. The number of epochs is set to 20 according to the results of ModelCheckpoint. The val_loss barely improve after 20 epochs. Also, this is a regression problem, so I set the loss function to MSE.
+
+(3) Then, I start to try different architechture and parameters. I have tried changed the following: (a) Active function (b) The number of convolutional layers: 2, 3, 4 (c) The depth and filter size of convolutional layers; (d) The number of fully-connected layers and neurons in the fully-connected layers. (e) Drop-out I check the test accuracy, and also run the model using simulator. At last, I choose the model I use. Please provide a detailed description of the model architecture (number of layers, type of layers, orders of the layers) and the parameter settings for each layer ( dimensions of the layer, activation type). The description should be detailed enough to allow your readers to reconstruct a similar network. Optional, please consider to include a simple sketch that will demonstrate the general pattern with a detailed parameter settings of the architecture.
+
+The model architecture is described as follows:
+
+(1)The number of layers are 11 layers;The order of the layers are convolutional layer, max-pooling layer, convolutional layer, max-pooling layer, convolutional layer, max-pooling layer, drop-out layer, and at last four fully-connected layers.
+
+(2) All activation functions are relu;
+
+(3) The depth of three convolutional layers are 32, 64 and 96;
+
+(4) The number of neurons for fully-connected layers are 120, 80, 43 and 1;
+
+(5) After chose the model, I am using all the data to train the neural network again(including validation data and test data). The dimensions for each layer are as follows: conv1: input is 32643, output is 296132; pool1: 153032 conv2: 122764 pool2: 61364 conv3: 31096 pool3: 1596 fc1: 120 fc2: 80 fc3: 43 fc4: 1
+
+(6) The filter size for the convolutional layers are 44. The filter size for pooling layers is 22;
+
+(7) The keep-prob is 0.5 for drop-out layer.
